@@ -6,7 +6,6 @@
 #include <stdexcept>
 #include <utility>
 
-// moze stworzyc Node?
 namespace aisdi
 {
 
