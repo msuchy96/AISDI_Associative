@@ -2,6 +2,6 @@
 Repository for second AISDI project: Mapy
 
 
-Temat projektu: Hashmapy i drzewa
+Topic of the project: Hashmapy i drzewa
 
 autor: Maciej Suchocki
