@@ -1,5 +1,5 @@
-#ifndef AISDI_MAPS_TREEMAP_H
-#define AISDI_MAPS_TREEMAP_H
+#ifndef AISDI_MAPS_HASHMAP_H
+#define AISDI_MAPS_HASHMAP_H
 
 #include <cstddef>
 #include <initializer_list>
@@ -10,7 +10,7 @@ namespace aisdi
 {
 
 template <typename KeyType, typename ValueType>
-class TreeMap
+class HashMap
 {
 public:
   using key_type = KeyType;
@@ -25,34 +25,34 @@ public:
   using iterator = Iterator;
   using const_iterator = ConstIterator;
 
-  TreeMap()
+  HashMap()
   {}
 
-  TreeMap(std::initializer_list<value_type> list)
+  HashMap(std::initializer_list<value_type> list)
   {
     (void)list; // disables "unused argument" warning, can be removed when method is implemented.
     throw std::runtime_error("TODO");
   }
 
-  TreeMap(const TreeMap& other)
+  HashMap(const HashMap& other)
   {
     (void)other;
     throw std::runtime_error("TODO");
   }
 
-  TreeMap(TreeMap&& other)
+  HashMap(HashMap&& other)
   {
     (void)other;
     throw std::runtime_error("TODO");
   }
 
-  TreeMap& operator=(const TreeMap& other)
+  HashMap& operator=(const HashMap& other)
   {
     (void)other;
     throw std::runtime_error("TODO");
   }
 
-  TreeMap& operator=(TreeMap&& other)
+  HashMap& operator=(HashMap&& other)
   {
     (void)other;
     throw std::runtime_error("TODO");
@@ -110,13 +110,13 @@ public:
     throw std::runtime_error("TODO");
   }
 
-  bool operator==(const TreeMap& other) const
+  bool operator==(const HashMap& other) const
   {
     (void)other;
     throw std::runtime_error("TODO");
   }
 
-  bool operator!=(const TreeMap& other) const
+  bool operator!=(const HashMap& other) const
   {
     return !(*this == other);
   }
@@ -153,13 +153,13 @@ public:
 };
 
 template <typename KeyType, typename ValueType>
-class TreeMap<KeyType, ValueType>::ConstIterator
+class HashMap<KeyType, ValueType>::ConstIterator
 {
 public:
-  using reference = typename TreeMap::const_reference;
+  using reference = typename HashMap::const_reference;
   using iterator_category = std::bidirectional_iterator_tag;
-  using value_type = typename TreeMap::value_type;
-  using pointer = const typename TreeMap::value_type*;
+  using value_type = typename HashMap::value_type;
+  using pointer = const typename HashMap::value_type*;
 
   explicit ConstIterator()
   {}
@@ -213,11 +213,11 @@ public:
 };
 
 template <typename KeyType, typename ValueType>
-class TreeMap<KeyType, ValueType>::Iterator : public TreeMap<KeyType, ValueType>::ConstIterator
+class HashMap<KeyType, ValueType>::Iterator : public HashMap<KeyType, ValueType>::ConstIterator
 {
 public:
-  using reference = typename TreeMap::reference;
-  using pointer = typename TreeMap::value_type*;
+  using reference = typename HashMap::reference;
+  using pointer = typename HashMap::value_type*;
 
   explicit Iterator()
   {}
@@ -266,4 +266,4 @@ public:
 
 }
 
-#endif /* AISDI_MAPS_MAP_H */
+#endif /* AISDI_MAPS_HASHMAP_H */
