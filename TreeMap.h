@@ -204,7 +204,10 @@ public:
   {
     if(counter==0)
       return cend();
-    return const_iterator(root, this);
+   node* tmp=root;
+   while((tmp->left_son)!=nullptr)
+    tmp=tmp->left_son;
+    return const_iterator(tmp, this);
   }
 
   const_iterator cend() const
