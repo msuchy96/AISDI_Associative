@@ -40,19 +40,21 @@ namespace aisdi
         TreeMap(std::initializer_list<value_type> list) : TreeMap()
         {
           for(auto iterator=list.begin(); iterator!=list.end();iterator++)
-              operator[]((*iterator).first)=(*iterator).second;
+          {
+              auto newNode = creatingNewNode((*iterator).first);
+              newNode->pair.second=(*iterator).second;
+          }
+
 
         }
 
-        TreeMap(const TreeMap& other)
+        TreeMap(const TreeMap& other) : TreeMap()
         {
-
-            (void)other;
-            throw std::runtime_error("TODO2");
-           /// for(auto iterator=other.begin(); iterator!=other.end();iterator++)
-           ///     operator[]((*iterator).first)=(*iterator).second;
-
-           /// if(other.isEmpty()) std::cout<<"other is empty \n"; ?!
+            for(auto iterator=other.begin(); iterator!=other.end();iterator++)
+            {
+                auto newNode = creatingNewNode((*iterator).first);
+                newNode->pair.second=(*iterator).second;
+            }
         }
 
         TreeMap(TreeMap&& other)
