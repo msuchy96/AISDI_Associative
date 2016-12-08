@@ -426,7 +426,7 @@ namespace aisdi
           return const_cast<reference>(ConstIterator::operator*());
         }
     };
-
+ 
 }
 
 #endif /* AISDI_MAPS_MAP_H */
