@@ -36,6 +36,10 @@ namespace aisdi
         using node = TreeNode<key_type, mapped_type>;
 
         TreeMap(): root(nullptr), counter(0)  {}
+        ~TreeMap()
+        {
+            deleteTree();
+        }
 
         TreeMap(std::initializer_list<value_type> list) : TreeMap()
         {
@@ -45,28 +49,30 @@ namespace aisdi
               newNode->pair.second=(*iterator).second;
           }
 
-
         }
-
         TreeMap(const TreeMap& other) : TreeMap()
         {
-            for(auto iterator=other.begin(); iterator!=other.end();iterator++)
-            {
-                auto newNode = creatingNewNode((*iterator).first);
-                newNode->pair.second=(*iterator).second;
-            }
+            copyingNodes(other);
         }
 
         TreeMap(TreeMap&& other)
         {
-          (void)other;
-          throw std::runtime_error("TODO3");
+            root=other.root;
+            other.root=nullptr;
+            counter=other.counter;
+            other.counter=0;
+            maximumKey=other.maximumKey;
+            minimumKey=other.minimumKey;
+
         }
 
         TreeMap& operator=(const TreeMap& other)
         {
-          (void)other;
-          throw std::runtime_error("TODO4");
+          if(&other==this)
+              return *this;
+            deleteTree();
+            copyingNodes(other);
+            return *this;
         }
 
         TreeMap& operator=(TreeMap&& other)
@@ -80,43 +86,7 @@ namespace aisdi
           return (counter==0);
         }
 
-        node *creatingNewNode(const key_type &key)
-        {
-          counter++;
-          node *tmp = new TreeNode<key_type, mapped_type>(key, mapped_type{});
 
-          if (root == nullptr)
-          {
-            root=tmp;
-            maximumKey=minimumKey=key;
-            return tmp;
-          }
-
-          node *parent_current = nullptr;
-          node *current = root;
-          while (current != nullptr)
-          {
-            parent_current = current;
-            if (current->pair.first < key)
-              current = current->right_son;
-            else
-              current = current->left_son;
-          }
-
-          if (parent_current->pair.first < key)
-            parent_current->right_son = tmp;
-          else
-            parent_current->left_son = tmp;
-          tmp->parent = parent_current;
-
-          if (key > maximumKey)
-            maximumKey = key;
-          else if (key < minimumKey)
-            minimumKey = key;
-
-
-          return tmp;
-        }
 
 
         mapped_type& operator[](const key_type& key)
@@ -242,6 +212,74 @@ namespace aisdi
             return last;
         }
 
+        void deleteTree()
+        {
+            if(root==nullptr)
+                return;
+            deleteAllNodes(root->left_son);
+            deleteAllNodes(root->right_son);
+            counter=0;
+            delete root;
+            root=nullptr;
+
+        }
+
+        void deleteAllNodes(node *tmpNode)
+        {
+            if(tmpNode == nullptr) return;
+            deleteAllNodes(tmpNode->left_son);
+            deleteAllNodes(tmpNode->right_son);
+            delete tmpNode;
+
+        }
+
+        void copyingNodes(const TreeMap& other)
+        {
+            for(auto iterator=other.begin(); iterator!=other.end();iterator++)
+            {
+                auto newNode = creatingNewNode((*iterator).first);
+                newNode->pair.second=(*iterator).second;
+            }
+
+        }
+
+        node *creatingNewNode(const key_type &key)
+        {
+            counter++;
+            node *tmp = new TreeNode<key_type, mapped_type>(key, mapped_type{});
+
+            if (root == nullptr)
+            {
+                root=tmp;
+                maximumKey=minimumKey=key;
+                return tmp;
+            }
+
+            node *parent_current = nullptr;
+            node *current = root;
+            while (current != nullptr)
+            {
+                parent_current = current;
+                if (current->pair.first < key)
+                    current = current->right_son;
+                else
+                    current = current->left_son;
+            }
+
+            if (parent_current->pair.first < key)
+                parent_current->right_son = tmp;
+            else
+                parent_current->left_son = tmp;
+            tmp->parent = parent_current;
+
+            if (key > maximumKey)
+                maximumKey = key;
+            else if (key < minimumKey)
+                minimumKey = key;
+
+
+            return tmp;
+        }
 
         node* root;
         size_t counter;
