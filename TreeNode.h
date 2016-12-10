@@ -9,8 +9,6 @@ struct TreeNode
     TreeNode<KeyType, ValueType>* left_son;
     TreeNode<KeyType, ValueType>* right_son;
     std::pair<const KeyType, ValueType> pair;
-   // BSTNode(BSTNode* p):parent(p), left(nullptr), right(nullptr){
-   // }
     TreeNode():parent(nullptr),left_son(nullptr), right_son(nullptr) {}
     TreeNode(KeyType key, ValueType value) : parent(nullptr), left_son(nullptr), right_son(nullptr), pair(std::make_pair(key, value)) {}
 
