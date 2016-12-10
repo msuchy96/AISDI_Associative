@@ -10,17 +10,13 @@
 #include "TreeNode.h"
 
 
-/*
- map->currentColection
- tree_node->node
- BSTNode->TreeNode
- */
 namespace aisdi
 {
 
     template <typename KeyType, typename ValueType>
     class TreeMap
     {
+
     public:
         using key_type = KeyType;
         using mapped_type = ValueType;
@@ -66,19 +62,29 @@ namespace aisdi
 
         }
 
-        TreeMap& operator=(const TreeMap& other)
-        {
-          if(&other==this)
-              return *this;
-            deleteTree();
-            copyingNodes(other);
+        TreeMap& operator=(const TreeMap& other) {
+            if (&other != this)
+            {
+                deleteTree();
+                copyingNodes(other);
+            }
             return *this;
         }
 
         TreeMap& operator=(TreeMap&& other)
         {
-          (void)other;
-          throw std::runtime_error("TODO5");
+            if(&other!=this) {
+
+                deleteTree();
+                root = other.root;
+                other.root = nullptr;
+                counter = other.counter;
+                other.counter = 0;
+                maximumKey = other.maximumKey;
+                minimumKey = other.minimumKey;
+            }
+            return *this;
+
         }
 
         bool isEmpty() const
@@ -101,14 +107,19 @@ namespace aisdi
 
         const mapped_type& valueOf(const key_type& key) const
         {
-          (void)key;
-          throw std::runtime_error("TODO6");
+          auto constiter = find(key);
+            if(constiter == end())
+                throw std::out_of_range("Out Of Range");
+            return (*constiter).second;
+
         }
 
         mapped_type& valueOf(const key_type& key)
         {
-          (void)key;
-          throw std::runtime_error("TODO7");
+            auto iter = find(key);
+            if(iter == end())
+                throw std::out_of_range("Out Of Range");
+            return (*iter).second;
         }
 
         const_iterator find(const key_type& key) const
@@ -140,14 +151,61 @@ namespace aisdi
 
         void remove(const key_type& key)
         {
-          (void)key;
-          throw std::runtime_error("TODO8");
+          remove(find(key));
         }
 
         void remove(const const_iterator& it)
         {
-          (void)it;
-          throw std::runtime_error("TODO9");
+          if(it == end())
+              throw std::out_of_range("Out Of Range");
+            auto current = it.currentNode;
+
+            if (current->left_son == nullptr) /// nie ma dziecka lub ma tylko prawe
+                replace(current, current->right_son);
+
+            else if (current->right_son == nullptr) /// ma tylko lewe dziecko
+                replace(current, current->left_son);
+
+            else /// ma 2 dzieci
+            {
+                auto tmp = current->right_son;
+
+                while (tmp->left_son != nullptr) /// tmp - następnik current
+                    tmp = tmp->left_son;
+
+                replace(tmp, tmp->right_son);
+                replace(current, tmp);
+            }
+
+
+
+            if ( maximumKey == current->pair.first)
+                setMax();
+
+            if (minimumKey == current->pair.first )
+                setMin();
+
+            current->left_son = nullptr;
+            current->right_son = nullptr;
+            current->parent = nullptr;
+            delete current;
+            counter--;
+
+        }
+
+        void replace(node* delNode, node* repNode)
+        {
+
+
+            if (delNode == root)
+                root = repNode;
+            else if (delNode->parent->left_son == delNode)
+                delNode->parent->left_son = repNode;
+            else
+                delNode->parent->right_son = repNode;
+            if (repNode != nullptr)
+                repNode->parent = delNode->parent;
+
         }
 
         size_type getSize() const
@@ -157,8 +215,14 @@ namespace aisdi
 
         bool operator==(const TreeMap& other) const
         {
-          (void)other;
-          throw std::runtime_error("TODO10");
+            if (other.getSize() != getSize())
+                return false;
+            for (auto iterator = begin(); iterator != end(); iterator++)
+            {
+                if (other.valueOf((*iterator).first) != (*iterator).second)
+                    return false;
+            }
+            return true;
         }
 
         bool operator!=(const TreeMap& other) const
@@ -281,6 +345,34 @@ namespace aisdi
             return tmp;
         }
 
+        void setMin()
+        {
+            if(root == nullptr)
+                return;
+
+            auto tmp=root;
+
+            while(tmp->left_son != nullptr)
+                tmp=tmp->left_son;
+
+            minimumKey=tmp->pair.first;
+
+        }
+
+        void setMax()
+        {
+            if(root == nullptr)
+                return;
+
+            auto tmp=root;
+
+            while(tmp->right_son != nullptr)
+                tmp=tmp->right_son;
+
+            maximumKey=tmp->pair.first;
+
+        }
+
         node* root;
         size_t counter;
         key_type maximumKey;
@@ -401,9 +493,12 @@ namespace aisdi
         {
           return !(*this == other);
         }
+
+
     private:
         node* currentNode;
         collection* currentCollection;
+       friend void TreeMap<KeyType, ValueType>::remove(const const_iterator&);
 
     };
 
