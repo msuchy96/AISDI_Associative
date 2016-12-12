@@ -7,14 +7,14 @@
 namespace
 {
 
-template <typename K, typename V>
-using Map = aisdi::Map<K, V>;
+    template <typename K, typename V>
+    using Map = aisdi::Map<K, V>;
 
-void perfomTest()
-{
-  Map<int, std::string> map;
-  map[1] = "TODO";
-}
+    void perfomTest()
+    {
+      Map<int, std::string> map;
+      map[1] = "TODO";
+    }
 
 } // namespace
 

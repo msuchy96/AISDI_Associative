@@ -10,6 +10,7 @@
 #include "TreeNode.h"
 
 
+
 namespace aisdi
 {
 
@@ -334,13 +335,13 @@ namespace aisdi
                 parent_current->right_son = tmp;
             else
                 parent_current->left_son = tmp;
+
             tmp->parent = parent_current;
 
             if (key > maximumKey)
                 maximumKey = key;
             else if (key < minimumKey)
                 minimumKey = key;
-
 
             return tmp;
         }
@@ -401,11 +402,11 @@ namespace aisdi
         ConstIterator& operator++()
         {
             if(currentNode == nullptr)
-                throw std::out_of_range("OUT OF RANGE 3: Can't increment null element!");
+                throw std::out_of_range("Out OF Range: Can't increment null element!");
           if(currentNode->right_son == nullptr)
           {
               auto tmpParent=currentNode->parent;
-              while(tmpParent!= nullptr && currentNode==tmpParent->right_son) // go to parent as long as he is a left son
+              while(tmpParent!= nullptr && currentNode==tmpParent->right_son) /// idzie do rodzica tak dlugo jak jest prawym synem
               {
                   currentNode=tmpParent;
                   tmpParent=currentNode->parent;
@@ -436,7 +437,7 @@ namespace aisdi
         {
 
             if(currentCollection->begin()==(*this))
-                throw std::out_of_range("OUT OF RANGE 3: Can't decrement root");
+                throw std::out_of_range("Out Of Range: Can't decrement root");
             if(currentNode == nullptr)
             {
                 currentNode=currentCollection->GetLastNode();
@@ -446,7 +447,7 @@ namespace aisdi
             if(currentNode->left_son == nullptr)
             {
                 auto tmpParent=currentNode->parent;
-                while(tmpParent!= nullptr && currentNode==tmpParent->left_son) // go to parent as long as he is a right son
+                while(tmpParent!= nullptr && currentNode==tmpParent->left_son) /// idzie do rodzica tak dlugo jak jest lewym synem
                 {
                     currentNode=tmpParent;
                     tmpParent=currentNode->parent;
@@ -475,7 +476,7 @@ namespace aisdi
         reference operator*() const
         {
             if (currentNode==nullptr)
-                throw std::out_of_range("OUT OF RANGE 1: You're trying to get pair of empty object ");
+                throw std::out_of_range("Out Of Range: You're trying to get pair of empty object ");
           return currentNode->pair;
         }
 
