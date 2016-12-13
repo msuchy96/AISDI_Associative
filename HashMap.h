@@ -5,7 +5,10 @@
 #include <initializer_list>
 #include <stdexcept>
 #include <utility>
+
 #include "HashNode.h"
+#include <ostream>
+#include <iostream>
 
 namespace aisdi
 {
@@ -35,16 +38,19 @@ public:
       hash_table[i] = nullptr;
   }
 
-  HashMap(std::initializer_list<value_type> list)
+  HashMap(std::initializer_list<value_type> list) : HashMap()
   {
-    (void)list; // disables "unused argument" warning, can be removed when method is implemented.
-    throw std::runtime_error("TODO 1");
+      for(auto iterator=list.begin(); iterator!=list.end();iterator++)
+      {
+          auto newNode = creatingNewNode((*iterator).first);
+          increaseCounter();
+          newNode->pair.second=(*iterator).second;
+      }
   }
 
-  HashMap(const HashMap& other)
+  HashMap(const HashMap& other) : HashMap()
   {
-    (void)other;
-    throw std::runtime_error("TODO 2");
+      *this = other;
   }
 
   HashMap(HashMap&& other)
@@ -76,7 +82,7 @@ public:
     if(iter != end())
       return (*iter).second;
     auto newNode = creatingNewNode(key);
-    counter++;
+      increaseCounter();
     return (newNode->pair.second);
   }
 
@@ -116,7 +122,7 @@ public:
 
   size_type getSize() const
   {
-    throw std::runtime_error("TODO 14");
+    return counter;
   }
 
   bool operator==(const HashMap& other) const
@@ -132,22 +138,29 @@ public:
 
   iterator begin()
   {
-    throw std::runtime_error("TODO 16");
+
+      size_type index = FirstNotEmptyRecord();
+
+      return Iterator(this, hash_table[index] , index);
   }
 
   iterator end()
   {
-    return Iterator(this);
+    return Iterator(this, nullptr,TABLE_SIZE);
   }
+
+
 
   const_iterator cbegin() const
   {
-    throw std::runtime_error("TODO 18");
+      size_type index = FirstNotEmptyRecord();
+
+      return ConstIterator(this,hash_table[index],index);
   }
 
   const_iterator cend() const
   {
-    return ConstIterator(this);
+    return ConstIterator(this, nullptr, TABLE_SIZE);
   }
 
   const_iterator begin() const
@@ -168,10 +181,21 @@ private:
       {
         if(currentNode->pair.first == key)
           return currentNode;
-
+          currentNode=currentNode->next;
       }
       return currentNode;
     }
+
+     size_type FirstNotEmptyRecord() const
+    {
+        size_type index = 0;
+
+        while(hash_table[index] == nullptr && index != TABLE_SIZE)
+            index++;
+
+        return  index;
+    }
+
 
     size_type hashFunction(const key_type& key) const
     {
@@ -194,6 +218,7 @@ private:
         hash_table[hashKey] = new HashNode<key_type, mapped_type>(key, mapped_type{});
         currentNode = hash_table[hashKey];
 
+
       }
       else
       {
@@ -204,8 +229,12 @@ private:
         currentNode=currentNode->next;
       }
 
-
       return currentNode;
+    }
+
+    void increaseCounter()
+    {
+        counter++;
     }
 
     static const size_type TABLE_SIZE = 100;
@@ -239,27 +268,74 @@ public:
 
   ConstIterator& operator++()
   {
-    throw std::runtime_error("TODO 21");
+    if(currentHash_Node == nullptr || currentMap == nullptr)
+        throw std::out_of_range("Out Of Range: Can't increment from last element or map is empty");
+
+      if(currentHash_Node->next != nullptr)
+       currentHash_Node=currentHash_Node->next;
+      else
+      {
+          index++;
+        while(currentMap->hash_table[index] == nullptr && index != currentMap->TABLE_SIZE)
+            index++;
+
+          if(index != currentMap->TABLE_SIZE)
+              currentHash_Node = currentMap->hash_table[index];
+
+          else
+              currentHash_Node = nullptr;
+      }
+      return *this;
   }
 
   ConstIterator operator++(int)
   {
-    throw std::runtime_error("TODO 22");
+      auto tmp = *this;
+    operator++();
+      return tmp;
   }
 
   ConstIterator& operator--()
   {
-    throw std::runtime_error("TODO 23");
+      if(currentMap == nullptr)
+          throw std::out_of_range("Out Of Range: Can't decrement - map is empty");
+
+      if(currentHash_Node == currentMap->hash_table[index]) /// when end to
+      {
+        index--;
+          while(index > 0 && currentMap->hash_table[index] == nullptr)
+              index--;
+
+          if(index == 0 && currentMap->hash_table[index] == nullptr)
+              throw std::out_of_range("Out Of Range");
+
+          currentHash_Node=currentMap->hash_table[index];
+
+          while(currentHash_Node->next != nullptr)
+              currentHash_Node=currentHash_Node->next;
+
+      }
+      else
+          currentHash_Node=currentHash_Node->prev;
+
+
+      return *this;
   }
 
   ConstIterator operator--(int)
   {
-    throw std::runtime_error("TODO 24");
+
+      auto tmp = *this;
+      operator--();
+      return tmp;
+
   }
 
   reference operator*() const
   {
-    throw std::runtime_error("TODO 25 ");
+    if(currentHash_Node == nullptr)
+        throw std::out_of_range("Out Of Range: Can't take value from NULL element");
+      return currentHash_Node->pair;
   }
 
   pointer operator->() const
