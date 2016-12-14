@@ -53,22 +53,45 @@ public:
       *this = other;
   }
 
-  HashMap(HashMap&& other)
+  HashMap(HashMap&& other) : HashMap()
   {
-    (void)other;
-    throw std::runtime_error("TODO 3");
+      hash_node **atcual = hash_table;
+
+      counter = other.counter;
+      hash_table = other.hash_table;
+      other.counter=0;
+      other.hash_table=atcual;
   }
 
   HashMap& operator=(const HashMap& other)
   {
-    (void)other;
-    throw std::runtime_error("TODO 4");
+    if(&other != this)
+    {
+        deleteHashMap();
+        for(auto iterator=other.begin(); iterator!=other.end();iterator++)
+        {
+            auto newNode = creatingNewNode((*iterator).first);
+            increaseCounter();
+            newNode->pair.second=(*iterator).second;
+        }
+    }
+      return *this;
   }
 
   HashMap& operator=(HashMap&& other)
   {
-    (void)other;
-    throw std::runtime_error("TODO 5");
+      if(&other != this)
+      {
+          deleteHashMap();
+          hash_node **atcual = hash_table;
+
+          counter = other.counter;
+          hash_table = other.hash_table;
+          other.counter=0;
+          other.hash_table=atcual;
+
+      }
+      return *this;
   }
 
   bool isEmpty() const
@@ -88,15 +111,20 @@ public:
 
   const mapped_type& valueOf(const key_type& key) const
   {
-    (void)key;
-    throw std::runtime_error("TODO 8");
+      hash_node* currentNode = searchNode(key);
+      if(currentNode == nullptr)
+          throw std::out_of_range("Out Of Range: Can't take value. There is no such a node.");
+      return  currentNode->pair.second;
   }
 
   mapped_type& valueOf(const key_type& key)
   {
-    (void)key;
-    throw std::runtime_error("TODO 9");
+      hash_node* currentNode = searchNode(key);
+      if(currentNode == nullptr)
+          throw std::out_of_range("Out Of Range: Can't take value. There is no such a node.");
+      return  currentNode->pair.second;
   }
+
 
   const_iterator find(const key_type& key) const
   {
@@ -204,11 +232,6 @@ private:
 
     hash_node* creatingNewNode(const key_type& key) const
     {
-      /// nie znalazło node'a o podanym kluczu
-      /// chcemy zwrocic node'a o danym kluczu tworzac go w danym miejscu w tablicy hashującjej w tym celu:
-      /// wejsc w tablicy miejsce o danym indeksie funkcja haszujaca
-      /// jesli dany element jest nullptr dodac nasz element do tego miejsca
-      /// jesli nie jest nullptr pojsc do konca listy i wrzucic nasz element
 
       size_type hashKey = hashFunction(key);
       hash_node *currentNode = hash_table[hashKey];
@@ -217,8 +240,6 @@ private:
       {
         hash_table[hashKey] = new HashNode<key_type, mapped_type>(key, mapped_type{});
         currentNode = hash_table[hashKey];
-
-
       }
       else
       {
@@ -235,6 +256,36 @@ private:
     void increaseCounter()
     {
         counter++;
+    }
+
+    void deleteHashMap()
+    {
+        if(counter)
+        {
+            for(size_type i=0; i<TABLE_SIZE; i++)
+
+                if (hash_table[i] != nullptr)
+                    deleteHashList(i);
+
+        }
+
+        counter=0;
+    }
+
+    void deleteHashList(size_type i)
+    {
+        hash_node *tmp;
+        hash_node *tmp2;
+        tmp=hash_table[i];
+        while(tmp != nullptr)
+        {
+            tmp2=tmp->next;
+            tmp->prev= nullptr;
+            tmp->next= nullptr;
+            delete tmp;
+            tmp=tmp2;
+        }
+
     }
 
     static const size_type TABLE_SIZE = 100;
