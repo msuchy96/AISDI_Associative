@@ -28,7 +28,7 @@ public:
   using const_iterator = ConstIterator;
 
 private:
-  static const size_type TABLE_SIZE = 69;
+  const size_type TABLE_SIZE;
   struct HashNode
   {
     value_type data;
@@ -42,12 +42,12 @@ private:
   size_type count;
 
 public:
-  HashMap() : table(nullptr), count(0)
+  HashMap(size_type tableSize = 1000) : TABLE_SIZE(tableSize), table(nullptr), count(0)
   {
     //table = new HashNode* [TABLE_SIZE]();
     table = new HashNode* [TABLE_SIZE]{nullptr};
-    for (size_type i = 0; i < TABLE_SIZE; ++i)
-      table[i] = nullptr;
+    //for (size_type i = 0; i < TABLE_SIZE; ++i)
+    //  table[i] = nullptr;
   }
 
   HashMap(std::initializer_list<value_type> list) : HashMap()
@@ -106,28 +106,23 @@ public:
   mapped_type& operator[](const key_type& key)
   {
     size_type hashKey = hashFunction(key);
-    HashNode *node = table[hashKey];
+    HashNode *node = findNode(key);
 
     if(node == nullptr) {
-      table[hashKey] = new HashNode(key, mapped_type());
-      node = table[hashKey];
+      node = new HashNode(key, mapped_type());
       ++count;
-    }
-    else if(node->data.first != key){
-      while(node->next != nullptr) {
-        if(node->next->data.first == key) {
-          break;
-        }
-        else
-          node = node->next;
-      }
-      if(node->next == nullptr) {
-        node->next = new HashNode(key, mapped_type(), node);
-        ++count;
-      }
-      node = node->next;
-    }
 
+      if( table[ hashKey ] == nullptr ) {
+        table[hashKey] = node;
+      }
+      else {
+        HashNode *tmp = table[hashKey];
+        while(tmp->next != nullptr)
+          tmp = tmp->next;
+        tmp->next = node;
+        node->prev = tmp;
+      }
+    }
     return node->data.second;
   }
 
@@ -166,7 +161,7 @@ public:
   {
     if(this != it.myMap || it == end())
       throw std::out_of_range("remove");
-    remove(it.myNode,it.index);
+    remove(it.myNode, it.myNode->data.first);
   }
 
   size_type getSize() const
@@ -254,7 +249,8 @@ private:
 
   size_type hashFunction(const key_type& key) const
   {
-    return std::hash<key_type>()(key) % TABLE_SIZE;
+    //return std::hash<key_type>()(key) % TABLE_SIZE;
+    return key % TABLE_SIZE;
   }
 
   HashNode* findNode(const key_type& key) const
@@ -264,6 +260,7 @@ private:
       if(node->data.first == key) {
         return node;
       }
+      node = node->next;
     }
     return node;
   }

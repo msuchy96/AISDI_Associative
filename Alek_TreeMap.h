@@ -5,6 +5,7 @@
 #include <initializer_list>
 #include <stdexcept>
 #include <utility>
+#include <queue>
 
 namespace aisdi
 {
@@ -68,9 +69,22 @@ public:
   TreeMap& operator=(const TreeMap& other)
   {
     if(this != &other) {
-        erase();
-        for (auto it = other.begin(); it != other.end(); ++it)
-          insert( new Node(*it) );
+      erase();
+      //for (auto it = other.begin(); it != other.end(); ++it)
+      //  insert( new Node(*it) );
+      std::queue<Node*> q;
+      Node* node;
+
+      q.push(other.root);
+      while(!q.empty()) {
+        node = q.front();
+        q.pop();
+        if( node != nullptr ) {
+          q.push( node->left );
+          q.push( node->right );
+          insert( new Node(node->data) );
+        }
+      }
     }
     return *this;
   }
