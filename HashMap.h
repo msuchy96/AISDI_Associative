@@ -83,12 +83,12 @@ public:
       if(&other != this)
       {
           deleteHashMap();
-          hash_node **atcual = hash_table;
+          hash_node **actual = hash_table;
 
           counter = other.counter;
           hash_table = other.hash_table;
           other.counter=0;
-          other.hash_table=atcual;
+          other.hash_table=actual;
 
       }
       return *this;
@@ -117,7 +117,7 @@ public:
       return  currentNode->pair.second;
   }
 
-  mapped_type& valueOf(const key_type& key)
+  mapped_type& valueOf(const key_type& key) /// funckja ta nie jest uzywana w testach
   {
       hash_node* currentNode = searchNode(key);
       if(currentNode == nullptr)
@@ -138,14 +138,31 @@ public:
 
   void remove(const key_type& key)
   {
-    (void)key;
-    throw std::runtime_error("TODO 12");
+    remove(find((key)));
   }
 
   void remove(const const_iterator& it)
   {
-    (void)it;
-    throw std::runtime_error("TODO 13");
+    if(it == end())
+        throw std::out_of_range("Out Of Range: Can't remove null element");
+      auto current= it.currentHash_Node;
+      if(current->prev == nullptr) /// first element
+      {
+          hash_table[hashFunction(current->pair.first)] = current->next;
+
+      }
+      else
+          current->prev->next=current->next;
+
+      if(current->next != nullptr)
+          current->next->prev = current->prev;
+
+      current->prev = nullptr;
+      current->next = nullptr;
+      counter--;
+      delete current;
+
+
   }
 
   size_type getSize() const
@@ -155,8 +172,16 @@ public:
 
   bool operator==(const HashMap& other) const
   {
-    (void)other;
-    throw std::runtime_error("TODO 15");
+    if(other.counter != counter)
+        return false;
+      auto iter_other = other.begin();
+      for(auto iter_this = begin() ; iter_this!=end(); iter_this++)
+      {
+          if(*iter_this != *iter_other)
+              return false;
+          iter_other++;
+      }
+      return true;
   }
 
   bool operator!=(const HashMap& other) const
@@ -407,6 +432,7 @@ private:
     const HashMap *currentMap;
     hash_node *currentHash_Node;
     size_type index;
+    friend void HashMap<KeyType, ValueType>::remove(const const_iterator&);
 };
 
 template <typename KeyType, typename ValueType>
