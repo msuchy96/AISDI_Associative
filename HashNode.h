@@ -18,7 +18,5 @@ struct HashNode
     }
 
     ~HashNode()
-   {
-       delete next;
-   }
+   {}
 };

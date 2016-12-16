@@ -7,8 +7,8 @@
 #include <utility>
 
 #include "HashNode.h"
-#include <ostream>
-#include <iostream>
+
+
 
 namespace aisdi
 {
@@ -30,6 +30,14 @@ public:
   using iterator = Iterator;
   using const_iterator = ConstIterator;
 
+private:
+
+    static const size_type TABLE_SIZE = 100;
+    hash_node **hash_table;
+    size_type counter;
+
+public:
+
 
   HashMap() : hash_table(nullptr), counter(0)
   {
@@ -37,6 +45,12 @@ public:
     for (size_type i = 0; i < TABLE_SIZE; ++i)
       hash_table[i] = nullptr;
   }
+    ~HashMap()
+    {
+
+       deleteHashMap();
+        delete [] hash_table;
+    }
 
   HashMap(std::initializer_list<value_type> list) : HashMap()
   {
@@ -67,13 +81,16 @@ public:
   {
     if(&other != this)
     {
-        deleteHashMap();
+
+         deleteHashMap();
         for(auto iterator=other.begin(); iterator!=other.end();iterator++)
         {
+
             auto newNode = creatingNewNode((*iterator).first);
             increaseCounter();
             newNode->pair.second=(*iterator).second;
         }
+
     }
       return *this;
   }
@@ -208,6 +225,8 @@ public:
   {
       size_type index = FirstNotEmptyRecord();
 
+      if(index == TABLE_SIZE) return cend();
+
       return ConstIterator(this,hash_table[index],index);
   }
 
@@ -288,20 +307,27 @@ private:
         if(counter)
         {
             for(size_type i=0; i<TABLE_SIZE; i++)
+            {
 
                 if (hash_table[i] != nullptr)
+                {
                     deleteHashList(i);
+                    hash_table[i] = nullptr;
 
+                }
+                    //delete hash_table[i];
+
+            }
+
+            counter=0;
         }
-
-        counter=0;
     }
 
     void deleteHashList(size_type i)
     {
-        hash_node *tmp;
+
         hash_node *tmp2;
-        tmp=hash_table[i];
+        hash_node *tmp = hash_table[i];
         while(tmp != nullptr)
         {
             tmp2=tmp->next;
@@ -313,9 +339,7 @@ private:
 
     }
 
-    static const size_type TABLE_SIZE = 100;
-    hash_node **hash_table;
-    size_type counter;
+
 };
 
 template <typename KeyType, typename ValueType>
@@ -375,8 +399,7 @@ public:
   {
       if(currentMap == nullptr)
           throw std::out_of_range("Out Of Range: Can't decrement - map is empty");
-
-      if(currentHash_Node == currentMap->hash_table[index]) /// when end to
+      else if(currentHash_Node == nullptr || currentHash_Node == currentMap->hash_table[index]) /// when end to
       {
         index--;
           while(index > 0 && currentMap->hash_table[index] == nullptr)
