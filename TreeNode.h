@@ -11,5 +11,6 @@ struct TreeNode
     std::pair<const KeyType, ValueType> pair;
     TreeNode():parent(nullptr),left_son(nullptr), right_son(nullptr) {}
     TreeNode(KeyType key, ValueType value) : parent(nullptr), left_son(nullptr), right_son(nullptr), pair(std::make_pair(key, value)) {}
+    ~TreeNode() {}
 
 };

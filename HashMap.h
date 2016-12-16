@@ -81,11 +81,9 @@ public:
   {
     if(&other != this)
     {
-
          deleteHashMap();
         for(auto iterator=other.begin(); iterator!=other.end();iterator++)
         {
-
             auto newNode = creatingNewNode((*iterator).first);
             increaseCounter();
             newNode->pair.second=(*iterator).second;
@@ -113,7 +111,7 @@ public:
 
   bool isEmpty() const
   {
-    return (counter==0);
+    return counter==0;
   }
 
   mapped_type& operator[](const key_type& key)
@@ -134,7 +132,7 @@ public:
       return  currentNode->pair.second;
   }
 
-  mapped_type& valueOf(const key_type& key) /// funckja ta nie jest uzywana w testach
+  mapped_type& valueOf(const key_type& key) /// this function is not used in tests
   {
       hash_node* currentNode = searchNode(key);
       if(currentNode == nullptr)

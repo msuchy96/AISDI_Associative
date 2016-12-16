@@ -32,6 +32,7 @@ namespace aisdi
         using node = TreeNode<key_type, mapped_type>;
 
         TreeMap(): root(nullptr), counter(0)  {}
+
         ~TreeMap()
         {
             deleteTree();
@@ -89,8 +90,8 @@ namespace aisdi
 
         TreeMap& operator=(TreeMap&& other)
         {
-            if(&other!=this) {
-
+            if(&other!=this)
+            {
                 deleteTree();
                 root = other.root;
                 other.root = nullptr;
@@ -203,9 +204,7 @@ namespace aisdi
             if (minimumKey == current->pair.first )
                 setMin();
 
-            current->left_son = nullptr;
-            current->right_son = nullptr;
-            current->parent = nullptr;
+            current->left_son = current->right_son = current->parent = nullptr;
             delete current;
             counter--;
 
@@ -213,7 +212,6 @@ namespace aisdi
 
         void replace(node* delNode, node* repNode)
         {
-
 
             if (delNode == root)
                 root = repNode;
@@ -358,7 +356,6 @@ namespace aisdi
                 maximumKey = key;
             else if (key < minimumKey)
                 minimumKey = key;
-
 
             return tmp;
         }

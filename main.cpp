@@ -30,10 +30,18 @@ void performHashTest(std::size_t n, std::vector<int>& keys)
 
   start = std::chrono::system_clock::now();
   for (auto it = keys.begin(); it !=  keys.end(); ++it)
-    map[*it] = "DONE";
+    map[*it] = "Value";
   end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
-  std::cout << "HashMap   Add time:       " << elapsed_seconds.count() << "s\n";
+  std::cout << "Adding time in HashMap: " << elapsed_seconds.count() << "s\n";
+
+    start = std::chrono::system_clock::now();
+  for (auto it = keys.begin(); it !=  keys.end(); ++it)
+    map[*it] = "ChangedValue";
+  end = std::chrono::system_clock::now();
+  elapsed_seconds = end-start;
+  std::cout << "HashMap changing time: " << elapsed_seconds.count() << "s\n";
+
 
 
   start = std::chrono::system_clock::now();
@@ -41,8 +49,10 @@ void performHashTest(std::size_t n, std::vector<int>& keys)
     map.remove(begin(map));
   end = std::chrono::system_clock::now();
   elapsed_seconds = end-start;
-  std::cout << "HashMap   Remove time:    " << elapsed_seconds.count() << "s\n";
+  std::cout << "Removing time in HashMap: " << elapsed_seconds.count() << "s\n";
 }
+
+
 
 
     void performTreeTest(std::size_t n, std::vector<int>& keys)
@@ -54,10 +64,17 @@ void performHashTest(std::size_t n, std::vector<int>& keys)
 
         start = std::chrono::system_clock::now();
         for (auto it = keys.begin(); it !=  keys.end(); ++it)
-            map[*it] = "DONE";
+            map[*it] = "Value";
         end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "TreeMap   Add time:       " << elapsed_seconds.count() << "s\n";
+        std::cout << "Adding time in TreeMap: " << elapsed_seconds.count() << "s\n";
+
+         start = std::chrono::system_clock::now();
+        for (auto it = keys.begin(); it !=  keys.end(); ++it)
+        map[*it] = "ChangedValue";
+        end = std::chrono::system_clock::now();
+        elapsed_seconds = end-start;
+        std::cout << "TreeMap changing time: " << elapsed_seconds.count() << "s\n";
 
 
 
@@ -66,7 +83,7 @@ void performHashTest(std::size_t n, std::vector<int>& keys)
             map.remove(begin(map));
         end = std::chrono::system_clock::now();
         elapsed_seconds = end-start;
-        std::cout << "TreeMap   Remove time:    " << elapsed_seconds.count() << "s\n";
+        std::cout << "Removing time in TreeMap" << elapsed_seconds.count() << "s\n";
 
 
     }
